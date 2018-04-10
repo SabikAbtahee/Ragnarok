@@ -8,7 +8,9 @@ def readFile(fileName):
 def output(m, fileName):
     with open(fileName, 'w') as out_file:
         for i in range(len(m)):
-            out_file.writelines(m[i].value +' '+ m[i].text.replace('!$\$\$n','').replace('!$\$\$s',' ')+'\n')
+
+            out_file.writelines(m[i].value +' '+ m[i].text.replace('!$\$\$n','\n').replace('!$\$\$s',' '))
+
         
         
 #   Finding the longest common sub-sequence here. Trying to figure out what are the common lines between this wo files    
@@ -48,38 +50,27 @@ def replaceSpaceAndNewLine(linesFile):
     return addNewLine(lineWdoutSPNL) 
 
 
+def checkUpdates(l1, l2, common):
+    cmm1 = common
+    cmm2 = common
+    for i in l1:
+        if(i not in cmm1):
+            print('--',i.replace('!$\$\$n','[new_line]').replace('!$\$\$s','[space'))
+#        else:  cmm1.remove(i)  
+        
+    for i in l2:
+        if(i not in cmm2):
+            print('++',i.replace('!$\$\$n','[new_line]').replace('!$\$\$s','[space]'))
+#        else:  cmm2.remove(i)  
+
+    
+
+
 class map(object):
     def __init__(self, text, value): #value means (+ve)  or (-ve)
         self.text = text
         self.value = value
-        
-  
-def checkUpdate(lines, common, fileNumber): # here fileNumber means the file number.  
-    i, j = 0, 0
-    m1 = []
-    
-    lengthOfLines = len(lines)
-    lengthOfCommonLines = len(common)
-    
-    if(fileNumber==1): tempValue = '+'
-    elif(fileNumber==0): tempValue = '-' 
-#  ################################################  
-    while i < (lengthOfLines):
-        value = ' '
-        if(j<lengthOfCommonLines):
-            if(lines[i] != common[j]):
-                value = tempValue            
-#                print(lines[i])
-                m1.append(map(lines[i],value))
-                i += 1 
-            
-            else:
-                m1.append(map(lines[i],value))
-                i += 1
-                j += 1
-        else:
-             m1.append(map(lines[i],tempValue))
-             i += 1
+
         
     return m1
 
@@ -87,6 +78,40 @@ def checkUpdate2(lines, common, fileNumber): # here fileNumber means the file nu
     i, j = 0, 0
     m1 = []
     
+
+
+def deletation(l1, common):
+    i, j = 0
+    m1 = []
+    while i < len(l1):
+        flag = False
+        if(l1[i] != common[j]):
+            flag = True
+            i+=1
+        m1.append(map(l1[i],flag))
+        i += 1
+        j += 1
+    return m1
+
+def addition(l2, common):
+    i, j = 0
+    m2 = []
+    while i < len(l1):
+        flag = False
+        if(l2[i] != common[j]):
+            flag = True
+            i+=1
+        m2.append(map(l2[i],flag))
+        i += 1
+        j += 1
+    return m2
+    
+  
+def checkUpdate2(lines, common, fileNumber): # here fileNumber means the file number.  
+    i, j = 0, 0
+    m1 = []
+    
+
     lengthOfLines = len(lines)
     lengthOfCommonLines = len(common)
     
@@ -95,21 +120,20 @@ def checkUpdate2(lines, common, fileNumber): # here fileNumber means the file nu
 #  ################################################  
     while i < (lengthOfLines):
         value = ' '
-        if(j<lengthOfCommonLines):
+
+        if(j<=lengthOfCommonLines-1):
             if(lines[i] != common[j]):
                 value = tempValue            
-#                print(lines[i])
                 m1.append(map(lines[i],value))
                 i += 1 
             
-            else:
+            else: 
                 m1.append(map(lines[i],value))
                 i += 1
                 j += 1
-        else:
-             m1.append(map(lines[i],tempValue))
-             i += 1
-        
+        else: m1.append(map(lines[i],value))
+    
+
     return m1
 
 
@@ -117,15 +141,12 @@ def temMethod(l2):
     for i in l2:
         print('++',i.replace('!$\$\$n','[new_line]').replace('!$\$\$s','[space]'))
     
-def addNewLine(lines):
-    if(lines[len(lines) - 1][-7:] != '!$\$\$n'):
-        lines[len(lines) - 1]+'!$\$\$n'
-    return lines
 
 if __name__ == "__main__":
 #    reading file
-    linesFile1 = readFile("1.txt")
-    linesFile2 = readFile("2.txt")
+    linesFile1 = readFile("temp/1.txt")
+    linesFile2 = readFile("temp/2.txt")
+
     
 #   replacing all white spaces and newline with !$\$\$s , !$\$\$n respectively    
     l1 = (replaceSpaceAndNewLine(linesFile1))
@@ -137,9 +158,25 @@ if __name__ == "__main__":
 #   Macthing the common elements between two files.    
     commonMatch = lcs(l1,l2)
     temMethod(commonMatch)
-    m1 = checkUpdate(l1, commonMatch, 0)
-    m2 = checkUpdate(l2, commonMatch, 1)
+
+    m1 = checkUpdate2(l1, commonMatch, 0)
+    m2 = checkUpdate2(l2, commonMatch, 1)
     
     output(m1, "output1.txt")
     output(m2, "output2.txt")
     
+#    print(commonMatch)
+#    temMethod(commonMatch)
+
+    
+
+    
+#    print('File1')
+#    print(l1)
+#    print('File1')
+#    print(l2)
+#    
+#    print('Preview')
+#    
+#    checkUpdates(l1,l2,commonMatch)
+#############need to solve .. jodi kono line er por '\n' na thake taile '\n' lagiye nite hbe    
